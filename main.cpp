@@ -10,6 +10,60 @@ int main() {
     adrInduk indukNode, searchTemp;
     infoTypeInduk kota;
 
+    addInduk(graph, "A");
+    addInduk(graph, "B");
+    addInduk(graph, "C");
+    addInduk(graph, "D");
+    addInduk(graph, "E");
+
+    indukNode = findInduk(graph, "A");
+    if (indukNode == nullptr) {
+        cout << "Kota " << indukNama << " tidak ditemukan!" << endl;
+    } else {
+        infoTypeAnak anak = {12, "C"};
+        addAnak(indukNode, anak, graph);
+    }
+
+    indukNode = findInduk(graph, "A");
+    if (indukNode == nullptr) {
+        cout << "Kota " << indukNama << " tidak ditemukan!" << endl;
+    } else {
+        infoTypeAnak anak = {60, "D"};
+        addAnak(indukNode, anak, graph);
+    }
+
+    indukNode = findInduk(graph, "B");
+    if (indukNode == nullptr) {
+        cout << "Kota " << indukNama << " tidak ditemukan!" << endl;
+    } else {
+        infoTypeAnak anak = {10, "A"};
+        addAnak(indukNode, anak, graph);
+    }
+
+    indukNode = findInduk(graph, "C");
+    if (indukNode == nullptr) {
+        cout << "Kota " << indukNama << " tidak ditemukan!" << endl;
+    } else {
+        infoTypeAnak anak = {20, "B"};
+        addAnak(indukNode, anak, graph);
+    }
+
+    indukNode = findInduk(graph, "C");
+    if (indukNode == nullptr) {
+        cout << "Kota " << indukNama << " tidak ditemukan!" << endl;
+    } else {
+        infoTypeAnak anak = {32, "D"};
+        addAnak(indukNode, anak, graph);
+    }
+
+    indukNode = findInduk(graph, "E");
+    if (indukNode == nullptr) {
+        cout << "Kota " << indukNama << " tidak ditemukan!" << endl;
+    } else {
+        infoTypeAnak anak = {7, "A"};
+        addAnak(indukNode, anak, graph);
+    }
+
 
 
 
@@ -29,7 +83,8 @@ int main() {
         cout << "9. Cari derajat masuk(Kota)" << endl;
         cout << "10. Cari derajat keluar(Kota)" << endl;
         cout << "11. Cari derajat(Kota)" << endl;
-        cout << "12. Keluar" << endl;
+        cout << "12. Check apakah graph bersifat Sederhana" << endl;
+        cout << "13. Keluar" << endl;
 
         cout << "===================================" << endl;
         cout << "Pilih pilihan (1-12): ";
@@ -153,11 +208,10 @@ int main() {
                 if(searchTemp != nullptr){
                     indukNode = createInduk(kota);
                     x = derajatKeluar(graph, indukNode);
-                    cout << "Rute yang keluar menuju kota " << kota << " adalah sejumlah: " << x << endl;
+                    cout << "Jalan yang keluar menuju kota " << kota << " adalah sejumlah: " << x << endl;
                 } else {
                     cout << "Kota yang anda masukkan tidak terdaftar!\n";
                 }
-
 
                 break;
             case 11:
@@ -167,19 +221,30 @@ int main() {
                 if (searchTemp != nullptr){
                     indukNode = createInduk(kota);
                     x = derajat(graph, indukNode);
-                    cout << "Rute yang keluar & masuk menuju kota " << kota << " secara total adalah sejumlah: " << x << endl;
+                    cout << "Jalan yang keluar & masuk menuju kota " << kota << " secara total adalah sejumlah: " << x << endl;
                 } else {
                     cout << "Kota yang anda masukkan tidak terdaftar!\n";
                 }
+                break;
 
+            case 12:
+                cout << "Melakukan check...." << endl;
+                if(isSimpleGraph(graph)){
+                    cout << "Graph ini merupakan graph sederhana\n";
+                } else {
+                    cout << "Graph ini bukan graph sederhana\n";
+                }
+                break;
 
+            case 13:
+                cout << "Keluar dari Program..., Sampai Jumpa ^^" << endl;
                 break;
 
             default:
-                cout << "Pilihan tidak valid! Silakan pilih antara 1-12." << endl;
+                cout << "Pilihan tidak valid! Silakan pilih antara 1-13." << endl;
         }
-
-    } while (pilihan != 12);
+    } while (pilihan != 13);
     deAllocateInduk(graph);
+
     return 0;
 }

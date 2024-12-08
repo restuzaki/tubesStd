@@ -221,3 +221,24 @@ int derajat(listInduk L, adrInduk indukNode) {
     return derajatMasuk(L, indukNode) + derajatKeluar(L, indukNode);
 }
 
+bool isSimpleGraph(listInduk L) {
+    adrInduk induk = L.firstInduk;
+    while (induk != nullptr) {
+        adrAnak anak1 = induk->firstAnak;
+        while (anak1 != nullptr) {
+            adrAnak anak2 = anak1->next;
+            while (anak2 != nullptr) {
+                if (anak1->info.destination == anak2->info.destination) {
+                    return false;
+                }
+                anak2 = anak2->next;
+            }
+            anak1 = anak1->next;
+        }
+
+        induk = induk->next;
+    }
+
+    return true;
+}
+

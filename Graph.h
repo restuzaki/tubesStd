@@ -56,5 +56,7 @@ int derajatMasuk(listInduk L, adrInduk kota);
 int derajatKeluar(listInduk L, adrInduk indukNode);
 int derajat(listInduk L, adrInduk indukNode);
 
+bool isSimpleGraph(listInduk L);
+
 
 #endif // GRAPH_H_INCLUDED
