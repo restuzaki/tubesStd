@@ -163,7 +163,26 @@ void displayAnak(adrInduk indukNode) {
 }
 
 double cariRuteTerpendek(listInduk L, infoTypeInduk indukAwal, infoTypeInduk indukTujuan) {
+    adrInduk start = findInduk(L, indukAwal);
+    adrInduk goal = findInduk(L, indukTujuan);
 
+    if (start == nullptr || goal == nullptr) {
+        return -1;
+    }
+
+    double minDistance = -1;
+    adrAnak currentAnak = start->firstAnak;
+
+    while (currentAnak != nullptr) {
+        if (currentAnak->info.destination == indukTujuan) {
+            if (minDistance == -1 || currentAnak->info.jarak < minDistance) {
+                minDistance = currentAnak->info.jarak;
+            }
+        }
+        currentAnak = currentAnak->next;
+    }
+
+    return minDistance;
 }
 
 void deAllocateInduk(listInduk &L) {
@@ -241,4 +260,7 @@ bool isSimpleGraph(listInduk L) {
 
     return true;
 }
+
+
+
 

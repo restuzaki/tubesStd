@@ -59,4 +59,6 @@ int derajat(listInduk L, adrInduk indukNode);
 bool isSimpleGraph(listInduk L);
 
 
+
+
 #endif // GRAPH_H_INCLUDED
