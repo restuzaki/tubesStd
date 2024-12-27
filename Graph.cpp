@@ -260,7 +260,3 @@ bool isSimpleGraph(listInduk L) {
 
     return true;
 }
-
-
-
-
