@@ -162,7 +162,44 @@ void displayAnak(adrInduk indukNode) {
     cout << endl;
 }
 
-#include <map>
+
+double cariRuteTerpendekRekursif(listInduk L, infoTypeInduk indukAwal, infoTypeInduk indukTujuan, double jarakSaatIni, string &rute, set<string> visited) {
+    if (visited.find(indukAwal) != visited.end()) {
+        // Kota sudah dikunjungi, hindari siklus
+        return -1;
+    }
+
+    visited.insert(indukAwal); // Tandai kota sebagai dikunjungi
+
+    adrInduk start = findInduk(L, indukAwal);
+    if (start == nullptr) {
+        return -1;
+    }
+
+    adrAnak currentAnak = start->firstAnak;
+    double minDistance = -1;
+    while (currentAnak != nullptr) {
+        if (currentAnak->info.destination == indukTujuan) {
+            // Jika langsung terhubung
+            if (minDistance == -1 || jarakSaatIni + currentAnak->info.jarak < minDistance) {
+                minDistance = jarakSaatIni + currentAnak->info.jarak;
+                rute = indukAwal + " -> " + indukTujuan;
+            }
+        } else {
+            // Jika melalui kota perantara
+            string ruteTambahan;
+            double totalJarak = cariRuteTerpendekRekursif(L, currentAnak->info.destination, indukTujuan, jarakSaatIni + currentAnak->info.jarak, ruteTambahan, visited);
+            if (totalJarak != -1 && (minDistance == -1 || totalJarak < minDistance)) {
+                minDistance = totalJarak;
+                rute = indukAwal + " -> " + ruteTambahan;
+            }
+        }
+        currentAnak = currentAnak->next;
+    }
+
+    visited.erase(indukAwal); // Hapus kota dari kunjungan untuk eksplorasi rute lain
+    return minDistance;
+}
 
 double cariRuteTerpendek(listInduk L, infoTypeInduk indukAwal, infoTypeInduk indukTujuan) {
     adrInduk start = findInduk(L, indukAwal);
@@ -171,56 +208,37 @@ double cariRuteTerpendek(listInduk L, infoTypeInduk indukAwal, infoTypeInduk ind
         return -1;
     }
 
-    map<int, string> kotaDilalui;
-    int index = 0;
-    double totalJarak = 0;
+    double minDistance = -1;
+    string kotaTerlewati = indukAwal; // Menyimpan jalur yang dilewati
+    set<string> visited; // Set untuk melacak kota yang sudah dikunjungi
 
-    while (start != nullptr) {
-        kotaDilalui[index++] = start->info;
-
-        if (start->info == indukTujuan) {
-            break;
-        }
-
-        adrAnak currentAnak = start->firstAnak;
-        adrAnak shortestAnak = nullptr;
-        double minDistance = -1;
-
-        while (currentAnak != nullptr) {
-            adrInduk nextInduk = findInduk(L, currentAnak->info.destination);
-            if (nextInduk != nullptr) {
-                bool sudahDilalui = false;
-                for (const auto &kota : kotaDilalui) {
-                    if (kota.second == currentAnak->info.destination) {
-                        sudahDilalui = true;
-                        break;
-                    }
-                }
-                if (!sudahDilalui && (minDistance == -1 || currentAnak->info.jarak < minDistance)) {
-                    shortestAnak = currentAnak;
-                    minDistance = currentAnak->info.jarak;
-                }
+    adrAnak currentAnak = start->firstAnak;
+    while (currentAnak != nullptr) {
+        if (currentAnak->info.destination == indukTujuan) {
+            // Jika langsung terhubung
+            if (minDistance == -1 || currentAnak->info.jarak < minDistance) {
+                minDistance = currentAnak->info.jarak;
+                kotaTerlewati = indukAwal + " -> " + indukTujuan;
             }
-            currentAnak = currentAnak->next;
+        } else {
+            // Jika melalui kota perantara
+            string ruteTambahan;
+            double totalJarak = cariRuteTerpendekRekursif(L, currentAnak->info.destination, indukTujuan, currentAnak->info.jarak, ruteTambahan, visited);
+            if (totalJarak != -1 && (minDistance == -1 || totalJarak < minDistance)) {
+                minDistance = totalJarak;
+                kotaTerlewati = indukAwal + " -> " + ruteTambahan;
+            }
         }
-
-        if (shortestAnak == nullptr) {
-            return -1;
-        }
-
-        totalJarak += shortestAnak->info.jarak;
-        start = findInduk(L, shortestAnak->info.destination);
+        currentAnak = currentAnak->next;
     }
 
-    cout << "Kota yang dilalui: ";
-    for (int i = 0; i < index; ++i) {
-        cout << kotaDilalui[i];
-        if (i < index - 1) cout << " -> ";
+    if (minDistance != -1) {
+        cout << "Kota yang dilewati: " << kotaTerlewati << endl;
     }
-    cout << endl;
-
-    return totalJarak;
+    return minDistance;
 }
+
+
 
 
 

@@ -182,8 +182,6 @@ int main() {
                 ruteTerpendek = cariRuteTerpendek(graph, indukNama, tujuanNama);
                 if (ruteTerpendek != -1) {
                     cout << "Rute terpendek dari " << indukNama << " ke " << tujuanNama << " adalah " << ruteTerpendek << " km." << endl;
-                } else {
-                    cout << "Rute tidak ditemukan." << endl;
                 }
                 break;
 
