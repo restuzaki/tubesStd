@@ -162,6 +162,8 @@ void displayAnak(adrInduk indukNode) {
     cout << endl;
 }
 
+#include <map>
+
 double cariRuteTerpendek(listInduk L, infoTypeInduk indukAwal, infoTypeInduk indukTujuan) {
     adrInduk start = findInduk(L, indukAwal);
     if (start == nullptr) {
@@ -169,14 +171,13 @@ double cariRuteTerpendek(listInduk L, infoTypeInduk indukAwal, infoTypeInduk ind
         return -1;
     }
 
-    map<int, string> kotaDilalui; // Menyimpan urutan kota yang dilalui
-    int index = 0;               // Indeks untuk map
-    double totalJarak = 0;       // Total jarak dari rute
+    map<int, string> kotaDilalui;
+    int index = 0;
+    double totalJarak = 0;
 
     while (start != nullptr) {
-        kotaDilalui[index++] = start->info; // Simpan kota yang sedang dikunjungi
+        kotaDilalui[index++] = start->info;
 
-        // Jika sudah mencapai kota tujuan, berhenti
         if (start->info == indukTujuan) {
             break;
         }
@@ -185,7 +186,6 @@ double cariRuteTerpendek(listInduk L, infoTypeInduk indukAwal, infoTypeInduk ind
         adrAnak shortestAnak = nullptr;
         double minDistance = -1;
 
-        // Cari anak dengan jarak terpendek yang belum dilalui
         while (currentAnak != nullptr) {
             adrInduk nextInduk = findInduk(L, currentAnak->info.destination);
             if (nextInduk != nullptr) {
@@ -204,17 +204,14 @@ double cariRuteTerpendek(listInduk L, infoTypeInduk indukAwal, infoTypeInduk ind
             currentAnak = currentAnak->next;
         }
 
-        // Jika tidak ada anak yang valid, berarti tidak ada rute
         if (shortestAnak == nullptr) {
             return -1;
         }
 
-        // Tambahkan jarak ke total jarak dan lanjutkan ke node berikutnya
         totalJarak += shortestAnak->info.jarak;
         start = findInduk(L, shortestAnak->info.destination);
     }
 
-    // Cetak kota yang dilalui
     cout << "Kota yang dilalui: ";
     for (int i = 0; i < index; ++i) {
         cout << kotaDilalui[i];
@@ -224,6 +221,7 @@ double cariRuteTerpendek(listInduk L, infoTypeInduk indukAwal, infoTypeInduk ind
 
     return totalJarak;
 }
+
 
 
 void deAllocateInduk(listInduk &L) {
