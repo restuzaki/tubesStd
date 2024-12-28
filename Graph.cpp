@@ -164,6 +164,7 @@ void displayAnak(adrInduk indukNode) {
 
 double cariRuteTerpendek(listInduk L, infoTypeInduk indukAwal, infoTypeInduk indukTujuan) {
     adrInduk start = findInduk(L, indukAwal);
+<<<<<<< HEAD
     if (start == nullptr) {
         cout << "Kota asal tidak ditemukan.\n";
         return -1;
@@ -195,14 +196,32 @@ double cariRuteTerpendek(listInduk L, infoTypeInduk indukAwal, infoTypeInduk ind
                     }
                     nextAnak = nextAnak->next;
                 }
+=======
+    adrInduk goal = findInduk(L, indukTujuan);
+
+    if (start == nullptr || goal == nullptr) {
+        return -1;
+    }
+
+    double minDistance = -1;
+    adrAnak currentAnak = start->firstAnak;
+
+    while (currentAnak != nullptr) {
+        if (currentAnak->info.destination == indukTujuan) {
+            if (minDistance == -1 || currentAnak->info.jarak < minDistance) {
+                minDistance = currentAnak->info.jarak;
+>>>>>>> d15167ebfc0193b52a7f05e1de10c5acf5364407
             }
         }
         currentAnak = currentAnak->next;
     }
 
+<<<<<<< HEAD
     if (minDistance != -1) {
         cout << "Kota yang dilewati: " << kotaTerlewati << endl;
     }
+=======
+>>>>>>> d15167ebfc0193b52a7f05e1de10c5acf5364407
     return minDistance;
 }
 
@@ -283,4 +302,3 @@ bool isSimpleGraph(listInduk L) {
 
     return true;
 }
-
