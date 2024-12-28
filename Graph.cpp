@@ -162,28 +162,67 @@ void displayAnak(adrInduk indukNode) {
     cout << endl;
 }
 
+#include <map>
+
 double cariRuteTerpendek(listInduk L, infoTypeInduk indukAwal, infoTypeInduk indukTujuan) {
     adrInduk start = findInduk(L, indukAwal);
-    adrInduk goal = findInduk(L, indukTujuan);
-
-    if (start == nullptr || goal == nullptr) {
+    if (start == nullptr) {
+        cout << "Kota asal tidak ditemukan.\n";
         return -1;
     }
 
-    double minDistance = -1;
-    adrAnak currentAnak = start->firstAnak;
+    map<int, string> kotaDilalui;
+    int index = 0;
+    double totalJarak = 0;
 
-    while (currentAnak != nullptr) {
-        if (currentAnak->info.destination == indukTujuan) {
-            if (minDistance == -1 || currentAnak->info.jarak < minDistance) {
-                minDistance = currentAnak->info.jarak;
-            }
+    while (start != nullptr) {
+        kotaDilalui[index++] = start->info;
+
+        if (start->info == indukTujuan) {
+            break;
         }
-        currentAnak = currentAnak->next;
+
+        adrAnak currentAnak = start->firstAnak;
+        adrAnak shortestAnak = nullptr;
+        double minDistance = -1;
+
+        while (currentAnak != nullptr) {
+            adrInduk nextInduk = findInduk(L, currentAnak->info.destination);
+            if (nextInduk != nullptr) {
+                bool sudahDilalui = false;
+                for (const auto &kota : kotaDilalui) {
+                    if (kota.second == currentAnak->info.destination) {
+                        sudahDilalui = true;
+                        break;
+                    }
+                }
+                if (!sudahDilalui && (minDistance == -1 || currentAnak->info.jarak < minDistance)) {
+                    shortestAnak = currentAnak;
+                    minDistance = currentAnak->info.jarak;
+                }
+            }
+            currentAnak = currentAnak->next;
+        }
+
+        if (shortestAnak == nullptr) {
+            return -1;
+        }
+
+        totalJarak += shortestAnak->info.jarak;
+        start = findInduk(L, shortestAnak->info.destination);
     }
 
-    return minDistance;
+    cout << "Kota yang dilalui: ";
+    for (int i = 0; i < index; ++i) {
+        cout << kotaDilalui[i];
+        if (i < index - 1) cout << " -> ";
+    }
+    cout << endl;
+
+    return totalJarak;
 }
+
+
 
 void deAllocateInduk(listInduk &L) {
     adrInduk temp = L.firstInduk;
