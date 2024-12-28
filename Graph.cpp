@@ -163,8 +163,50 @@ void displayAnak(adrInduk indukNode) {
 }
 
 double cariRuteTerpendek(listInduk L, infoTypeInduk indukAwal, infoTypeInduk indukTujuan) {
+    adrInduk start = findInduk(L, indukAwal);
+    if (start == nullptr) {
+        cout << "Kota asal tidak ditemukan.\n";
+        return -1;
+    }
 
+    double minDistance = -1;
+    string kotaTerlewati = indukAwal; // Menyimpan jalur yang dilewati
+
+    adrAnak currentAnak = start->firstAnak;
+    while (currentAnak != nullptr) {
+        if (currentAnak->info.destination == indukTujuan) {
+            // Jika langsung terhubung
+            if (minDistance == -1 || currentAnak->info.jarak < minDistance) {
+                minDistance = currentAnak->info.jarak;
+                kotaTerlewati = indukAwal + " -> " + indukTujuan;
+            }
+        } else {
+            // Jika melalui kota perantara
+            adrInduk nextInduk = findInduk(L, currentAnak->info.destination);
+            if (nextInduk != nullptr) {
+                adrAnak nextAnak = nextInduk->firstAnak;
+                while (nextAnak != nullptr) {
+                    if (nextAnak->info.destination == indukTujuan) {
+                        double totalJarak = currentAnak->info.jarak + nextAnak->info.jarak;
+                        if (minDistance == -1 || totalJarak < minDistance) {
+                            minDistance = totalJarak;
+                            kotaTerlewati = indukAwal + " -> " + currentAnak->info.destination + " -> " + indukTujuan;
+                        }
+                    }
+                    nextAnak = nextAnak->next;
+                }
+            }
+        }
+        currentAnak = currentAnak->next;
+    }
+
+    if (minDistance != -1) {
+        cout << "Kota yang dilewati: " << kotaTerlewati << endl;
+    }
+    return minDistance;
 }
+
+
 
 void deAllocateInduk(listInduk &L) {
     adrInduk temp = L.firstInduk;
