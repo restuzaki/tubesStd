@@ -164,67 +164,66 @@ void displayAnak(adrInduk indukNode) {
 
 double cariRuteTerpendek(listInduk L, infoTypeInduk indukAwal, infoTypeInduk indukTujuan) {
     adrInduk start = findInduk(L, indukAwal);
-<<<<<<< HEAD
     if (start == nullptr) {
         cout << "Kota asal tidak ditemukan.\n";
         return -1;
     }
 
-    double minDistance = -1;
-    string kotaTerlewati = indukAwal; // Menyimpan jalur yang dilewati
+    map<int, string> kotaDilalui; // Menyimpan urutan kota yang dilalui
+    int index = 0;               // Indeks untuk map
+    double totalJarak = 0;       // Total jarak dari rute
 
-    adrAnak currentAnak = start->firstAnak;
-    while (currentAnak != nullptr) {
-        if (currentAnak->info.destination == indukTujuan) {
-            // Jika langsung terhubung
-            if (minDistance == -1 || currentAnak->info.jarak < minDistance) {
-                minDistance = currentAnak->info.jarak;
-                kotaTerlewati = indukAwal + " -> " + indukTujuan;
-            }
-        } else {
-            // Jika melalui kota perantara
+    while (start != nullptr) {
+        kotaDilalui[index++] = start->info; // Simpan kota yang sedang dikunjungi
+
+        // Jika sudah mencapai kota tujuan, berhenti
+        if (start->info == indukTujuan) {
+            break;
+        }
+
+        adrAnak currentAnak = start->firstAnak;
+        adrAnak shortestAnak = nullptr;
+        double minDistance = -1;
+
+        // Cari anak dengan jarak terpendek yang belum dilalui
+        while (currentAnak != nullptr) {
             adrInduk nextInduk = findInduk(L, currentAnak->info.destination);
             if (nextInduk != nullptr) {
-                adrAnak nextAnak = nextInduk->firstAnak;
-                while (nextAnak != nullptr) {
-                    if (nextAnak->info.destination == indukTujuan) {
-                        double totalJarak = currentAnak->info.jarak + nextAnak->info.jarak;
-                        if (minDistance == -1 || totalJarak < minDistance) {
-                            minDistance = totalJarak;
-                            kotaTerlewati = indukAwal + " -> " + currentAnak->info.destination + " -> " + indukTujuan;
-                        }
+                bool sudahDilalui = false;
+                for (const auto &kota : kotaDilalui) {
+                    if (kota.second == currentAnak->info.destination) {
+                        sudahDilalui = true;
+                        break;
                     }
-                    nextAnak = nextAnak->next;
                 }
-=======
-    adrInduk goal = findInduk(L, indukTujuan);
-
-    if (start == nullptr || goal == nullptr) {
-        return -1;
-    }
-
-    double minDistance = -1;
-    adrAnak currentAnak = start->firstAnak;
-
-    while (currentAnak != nullptr) {
-        if (currentAnak->info.destination == indukTujuan) {
-            if (minDistance == -1 || currentAnak->info.jarak < minDistance) {
-                minDistance = currentAnak->info.jarak;
->>>>>>> d15167ebfc0193b52a7f05e1de10c5acf5364407
+                if (!sudahDilalui && (minDistance == -1 || currentAnak->info.jarak < minDistance)) {
+                    shortestAnak = currentAnak;
+                    minDistance = currentAnak->info.jarak;
+                }
             }
+            currentAnak = currentAnak->next;
         }
-        currentAnak = currentAnak->next;
+
+        // Jika tidak ada anak yang valid, berarti tidak ada rute
+        if (shortestAnak == nullptr) {
+            return -1;
+        }
+
+        // Tambahkan jarak ke total jarak dan lanjutkan ke node berikutnya
+        totalJarak += shortestAnak->info.jarak;
+        start = findInduk(L, shortestAnak->info.destination);
     }
 
-<<<<<<< HEAD
-    if (minDistance != -1) {
-        cout << "Kota yang dilewati: " << kotaTerlewati << endl;
+    // Cetak kota yang dilalui
+    cout << "Kota yang dilalui: ";
+    for (int i = 0; i < index; ++i) {
+        cout << kotaDilalui[i];
+        if (i < index - 1) cout << " -> ";
     }
-=======
->>>>>>> d15167ebfc0193b52a7f05e1de10c5acf5364407
-    return minDistance;
+    cout << endl;
+
+    return totalJarak;
 }
-
 
 
 void deAllocateInduk(listInduk &L) {
